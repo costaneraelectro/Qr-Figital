@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Generador de Carnet QR · Falabella</title>
+<title>Generador de QR Figital · Falabella</title>
 <style>
   :root{
     --fala-green:#3cab2e;
@@ -35,11 +35,11 @@
   }
   header.top::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;
     background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%);}
-  .brand{display:flex;align-items:center;gap:12px;max-width:1080px;margin:0 auto}
-  .brand .umbrella{width:42px;height:42px;flex:0 0 auto;background:#fff;border-radius:50%;
+  .brand{display:flex;align-items:center;gap:13px;max-width:1080px;margin:0 auto}
+  .brand .logo{width:44px;height:44px;flex:0 0 auto;background:#fff;border-radius:12px;
     display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.15)}
-  .brand .umbrella svg{width:26px;height:26px}
-  .brand h1{font-size:19px;margin:0;font-weight:700;letter-spacing:.2px;line-height:1.15}
+  .brand .logo svg{width:26px;height:26px}
+  .brand h1{font-size:19px;margin:0;font-weight:800;letter-spacing:.2px;line-height:1.15}
   .brand p{margin:2px 0 0;font-size:12.5px;opacity:.92;font-weight:500}
   .beta{margin-left:auto;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.55);
     padding:4px 11px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:1.5px}
@@ -72,19 +72,17 @@
   .previewwrap{display:flex;flex-direction:column;align-items:center}
   .canvasframe{background:
       repeating-conic-gradient(#eef1ee 0% 25%, #f7faf7 0% 50%) 50%/22px 22px;
-      padding:16px;border-radius:14px;border:1px solid var(--line);width:100%;
+      padding:18px;border-radius:14px;border:1px solid var(--line);width:100%;
       display:flex;justify-content:center}
-  #preview{width:auto;max-width:100%;height:auto;max-height:460px;border-radius:8px;
-    box-shadow:0 6px 22px rgba(0,0,0,.14);background:#fff}
+  #preview{width:auto;max-width:100%;height:auto;max-height:520px;border-radius:10px;
+    box-shadow:0 8px 26px rgba(0,0,0,.16);background:#fff}
   .sizechip{margin-top:14px;display:inline-flex;align-items:center;gap:8px;background:#eef7ec;
     color:var(--fala-green-d);border:1px solid #cfe8c9;padding:7px 13px;border-radius:999px;
     font-size:12.5px;font-weight:700}
-  .steps{margin:16px 0 0;padding:0;list-style:none;font-size:12.5px;color:var(--ink-soft)}
-  .steps li{padding:5px 0 5px 22px;position:relative}
-  .steps li::before{content:"✓";position:absolute;left:0;color:var(--fala-green);font-weight:900}
+  .linknote{margin:16px 0 0;font-size:11.5px;color:var(--ink-soft);word-break:break-all;
+    background:#fafbfa;border:1px dashed var(--line);border-radius:9px;padding:10px 12px}
+  .linknote b{color:var(--ink);font-weight:700}
   footer{max-width:1080px;margin:0 auto;padding:0 16px 40px;color:var(--ink-soft);font-size:12px;text-align:center}
-  .qrpreview-note{font-size:11.5px;color:var(--ink-soft);margin-top:10px;word-break:break-all;
-    background:#fafbfa;border:1px dashed var(--line);border-radius:9px;padding:9px 11px;max-width:100%}
   .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
     background:var(--ink);color:#fff;padding:12px 20px;border-radius:999px;font-size:13.5px;font-weight:600;
     opacity:0;pointer-events:none;transition:.25s;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.25)}
@@ -94,14 +92,16 @@
 <body>
 <header class="top">
   <div class="brand">
-    <span class="umbrella">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#3cab2e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2v2M3.5 11a8.5 8.5 0 0 1 17 0Z" fill="#3cab2e" stroke="#3cab2e"/>
-        <path d="M12 11v8a2.2 2.2 0 0 1-4.4 0" stroke="#3cab2e" fill="none"/>
+    <span class="logo">
+      <svg viewBox="0 0 24 24" fill="#3cab2e">
+        <path d="M3 3h7v7H3V3zm2 2v3h3V5H5z"/>
+        <path d="M14 3h7v7h-7V3zm2 2v3h3V5h-3z"/>
+        <path d="M3 14h7v7H3v-7zm2 2v3h3v-3H5z"/>
+        <path d="M14 14h2v2h-2v-2zm3 0h2v2h-2v-2zm2 2v2h-2v-2h2zm-5 3h2v2h-2v-2zm3 0h2v2h-2v-2z"/>
       </svg>
     </span>
     <div>
-      <h1>Generador de Carnet QR</h1>
+      <h1>Generador de QR Figital</h1>
       <p>Banco Falabella · CMR · Cuenta Corriente 100% digital</p>
     </div>
     <span class="beta">BETA</span>
@@ -110,14 +110,14 @@
 
 <main>
   <section class="panel">
-    <h2>Datos del cliente</h2>
-    <p class="hint">Completa los datos para generar el carnet con código QR personalizado.</p>
+    <h2>Datos del asesor</h2>
+    <p class="hint">Completa los datos para generar el carnet con código QR.</p>
 
     <div class="field">
       <label>RUT <span class="sub">(sin dígito verificador)</span></label>
       <div class="rutrow">
-        <input type="text" id="rut" inputmode="numeric" autocomplete="off" placeholder="20.467.285">
-        <input type="text" id="dv" class="dv" maxlength="1" autocomplete="off" placeholder="7"
+        <input type="text" id="rut" inputmode="numeric" autocomplete="off" placeholder="12.345.678">
+        <input type="text" id="dv" class="dv" maxlength="1" autocomplete="off" placeholder="9"
                title="Dígito verificador (guión)">
       </div>
       <div class="rutinfo" id="rutinfo"></div>
@@ -125,21 +125,16 @@
 
     <div class="field">
       <label>Nombre</label>
-      <input type="text" id="nombre" autocomplete="off" placeholder="María José">
+      <input type="text" id="nombre" autocomplete="off" placeholder="Sebastián">
     </div>
     <div class="field">
       <label>Apellido</label>
-      <input type="text" id="apellido" autocomplete="off" placeholder="González">
+      <input type="text" id="apellido" autocomplete="off" placeholder="Soto Beltrán">
     </div>
 
     <button class="btn" id="download"><span class="ic">⬇</span>Generar y descargar PDF</button>
 
-    <ul class="steps">
-      <li>El QR abre la apertura de cuenta con el RUT del cliente.</li>
-      <li>Imprime, recorta y termolamina (lámina 66 × 102 mm).</li>
-      <li>El carnet queda más pequeño para dejar borde de sellado.</li>
-    </ul>
-    <div class="qrpreview-note" id="qrurl"></div>
+    <div class="linknote" id="qrurl"></div>
   </section>
 
   <section class="panel previewwrap">
@@ -153,221 +148,190 @@
 </main>
 
 <footer>
-  Versión beta · Uso interno para apertura de cuentas Banco Falabella. Verifica el RUT antes de imprimir.
+  Versión beta · Carnet 100% digital para asesores Banco Falabella. Verifica el RUT antes de imprimir.
 </footer>
 <div class="toast" id="toast"></div>
 
 <!--__LIB_JSPDF__-->
 <!--__LIB_QRCODE__-->
 <script>
-/* ===== Assets / constantes ===== */
-const CARD_SRC = "__CARD_B64__"; // data URI de la plantilla de tarjeta (1592x1055)
-const CARD_ASPECT = 1592/1055;   // ancho/alto de la tarjeta
+/* ===== Assets ===== */
+const LOGO_SRC = "__LOGO_B64__";     // CMR + Débito Falabella
+const LOGO_RATIO = 271/858;          // alto/ancho del logo
 
-// Ubicación de la caja blanca del QR dentro de la tarjeta (fracciones)
-const QRBOX = {x0:0.4783, x1:0.9087, y0:0.1719, y1:0.8293};
-const QR_PAD = 0.10; // margen interno del QR dentro de la caja blanca
-
-// URL base del QR (se reemplaza utm_term por el RUT+DV)
+/* URL base del QR (se reemplaza utm_term por el RUT+DV del asesor) */
 const BASE_URL = "https://www.bancofalabella.cl/pre-landing?utm_source=Falabella&utm_medium=QRregional&utm_content=costanera-center-qr-unificado&utm_campaign=apertura-falabella&utm_term=__TERM__&store_id=3660";
 
-/* ===== Layout de la pieza a imprimir (mm) — menor a 66 x 102 ===== */
-const PIECE = {
-  w: 60, h: 70,          // tamaño total de la pieza (portrait) < 66 x 102
-  margin: 4,             // margen lateral
-  gap: 6,                // separación tarjeta -> nombre
-};
-const MM = 20; // px por mm para render de alta resolución (~508 dpi)
+/* ===== Pieza a imprimir (mm) — menor a 66 x 102 para termolaminar con borde ===== */
+const PIECE = { w: 60, h: 92 };
+const MM = 24; // px por mm (alta resolución)
+
+const GRAY = '#54575b', GREEN = '#3cab2e', GREEN_D = '#2e9022', BORDER = '#d6d9dc';
 
 /* ===== Utilidades ===== */
 const $ = id => document.getElementById(id);
-const cardImg = new Image();
-let cardReady = false;
-cardImg.onload = () => { cardReady = true; render(); };
-cardImg.src = CARD_SRC;
+const logoImg = new Image(); let logoReady = false;
+logoImg.onload = () => { logoReady = true; render(); };
+logoImg.src = LOGO_SRC;
 
 function cleanDigits(s){ return (s||'').replace(/[^0-9]/g,''); }
 function cleanDv(s){ return (s||'').replace(/[^0-9kK]/g,'').toUpperCase().slice(0,1); }
 function formatMiles(d){ return d.replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
-
-// Dígito verificador esperado (módulo 11)
-function dvEsperado(rutDigits){
-  let s=0, m=2;
-  for(let i=rutDigits.length-1;i>=0;i--){ s+=parseInt(rutDigits[i],10)*m; m=m===7?2:m+1; }
-  const r=11-(s%11);
-  return r===11?'0':r===10?'K':String(r);
-}
+function dvEsperado(r){ let s=0,m=2; for(let i=r.length-1;i>=0;i--){s+=+r[i]*m; m=m===7?2:m+1;} const x=11-(s%11); return x===11?'0':x===10?'K':String(x); }
 
 function currentData(){
   const rut = cleanDigits($('rut').value);
   const dv  = cleanDv($('dv').value);
   const nombre = $('nombre').value.trim();
   const apellido = $('apellido').value.trim();
-  const term = rut + dv;              // RUT sin guión pero con dígito verificador
+  const term = rut + dv;                        // RUT sin guión, con dígito verificador
   const url = BASE_URL.replace('__TERM__', encodeURIComponent(term));
   return {rut,dv,nombre,apellido,term,url};
 }
 
-function nombreCompleto(d){
-  return [d.nombre,d.apellido].filter(Boolean).join(' ').toUpperCase();
+/* ===== Helpers de dibujo ===== */
+function roundRect(ctx,x,y,w,h,r){
+  r=Math.min(r,w/2,h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+function sans(px,bold){ return `${bold?'800':'400'} ${px}px -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif`; }
+
+function drawMixed(ctx, cx, top, parts, size){
+  // parts: [text, bold, color]
+  const ws = parts.map(([t,b])=>{ ctx.font=sans(size,b); return ctx.measureText(t).width; });
+  const total = ws.reduce((a,b)=>a+b,0);
+  let x = cx-total/2;
+  ctx.textBaseline='top'; ctx.textAlign='left';
+  parts.forEach(([t,b,c],i)=>{ ctx.font=sans(size,b); ctx.fillStyle=c; ctx.fillText(t,x,top); x+=ws[i]; });
+  return total;
 }
 
-/* ===== Dibujo del QR (nítido, módulo a módulo) ===== */
 function drawQR(ctx, text, x, y, size){
-  const qr = qrcode(0, 'M');
-  qr.addData(text);
-  qr.make();
-  const n = qr.getModuleCount();
-  const cell = size / n;
+  const qr = qrcode(0,'M'); qr.addData(text); qr.make();
+  const n = qr.getModuleCount(), cell = size/n;
   ctx.fillStyle = '#111418';
-  for(let r=0;r<n;r++){
-    for(let c=0;c<n;c++){
-      if(qr.isDark(r,c)){
-        // +0.5 para evitar hairlines entre módulos
-        ctx.fillRect(Math.floor(x+c*cell), Math.floor(y+r*cell),
-                     Math.ceil(cell)+0.5, Math.ceil(cell)+0.5);
-      }
-    }
-  }
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++) if(qr.isDark(r,c))
+    ctx.fillRect(Math.floor(x+c*cell), Math.floor(y+r*cell), Math.ceil(cell)+0.5, Math.ceil(cell)+0.5);
 }
 
-/* ===== Ajuste de texto para que quepa en un ancho ===== */
-function fitFont(ctx, text, maxW, start, min){
-  let size = start;
-  do{
-    ctx.font = `800 ${size}px -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif`;
-    if(ctx.measureText(text).width <= maxW) break;
-    size -= 1;
-  } while(size > min);
-  return size;
+function greenTab(ctx,x0,x1,top,bot,dir){
+  const w=x1-x0;
+  roundRect(ctx,x0,top,w,bot-top,w*0.28); ctx.fillStyle=GREEN; ctx.fill();
+  const cxm=(x0+x1)/2, cym=(top+bot)/2, ch=w*0.30, cw=w*0.24;
+  ctx.strokeStyle='#fff'; ctx.lineWidth=Math.max(6,w*0.15); ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.beginPath();
+  if(dir==='r'){ ctx.moveTo(cxm-cw/2,cym-ch); ctx.lineTo(cxm+cw/2,cym); ctx.lineTo(cxm-cw/2,cym+ch); }
+  else         { ctx.moveTo(cxm+cw/2,cym-ch); ctx.lineTo(cxm-cw/2,cym); ctx.lineTo(cxm+cw/2,cym+ch); }
+  ctx.stroke();
 }
 
-/* ===== Render de la pieza completa a un canvas ===== */
+function fitLine(ctx, text, maxW, start, min, bold){
+  let s=start;
+  do{ ctx.font=sans(s,bold); if(ctx.measureText(text).width<=maxW) break; s--; }while(s>min);
+  return s;
+}
+
+/* ===== Render de la tarjeta (pieza completa) ===== */
 function renderPiece(canvas){
-  const W = Math.round(PIECE.w*MM), H = Math.round(PIECE.h*MM);
-  canvas.width = W; canvas.height = H;
-  const ctx = canvas.getContext('2d');
-  ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality='high';
+  const W=Math.round(PIECE.w*MM), H=Math.round(PIECE.h*MM);
+  canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
+  const d=currentData();
 
-  // Fondo pieza (blanco) — el borde blanco es el margen para laminar
-  ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,W,H);
+  // Fondo + borde de la tarjeta
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+  roundRect(ctx,6,6,W-12,H-12,W*0.055); ctx.strokeStyle=BORDER; ctx.lineWidth=3; ctx.stroke();
 
-  const d = currentData();
+  const side=0.09*W;
 
-  // Tamaño de la tarjeta
-  const cardW = (PIECE.w - PIECE.margin*2)*MM;
-  const cardH = cardW / CARD_ASPECT;
-  const cardX = PIECE.margin*MM;
+  // Logos CMR + Débito
+  const lw=0.60*W, lh=lw*LOGO_RATIO, ly=0.05*H;
+  if(logoReady) ctx.drawImage(logoImg,(W-lw)/2,ly,lw,lh);
 
-  // Nombre y apellido en dos líneas (se mide antes para centrar verticalmente)
-  const maxW = (PIECE.w - PIECE.margin*2 - 2)*MM;
-  const lines = [d.nombre, d.apellido].filter(Boolean).map(s => s.toUpperCase());
-  const lineGap = Math.round(0.6*MM);
-  const accentGap = 6, accentW = Math.max(2, 0.5*MM);
-  const fss = lines.map(t => fitFont(ctx, t, maxW, Math.round(5*MM), Math.round(2.4*MM)));
-  const linesH = fss.reduce((a,b)=>a+b,0) + lineGap*Math.max(0, lines.length-1);
-  const nameBlockH = lines.length ? (linesH + accentGap + accentW) : 0;
-  const totalH = cardH + (lines.length ? PIECE.gap*MM + nameBlockH : 0);
-  const cardY = Math.max(PIECE.margin*MM, (H - totalH)/2);
+  // Texto
+  const ts=0.036*H;
+  const ty=ly+lh+0.038*H;
+  drawMixed(ctx,W/2,ty,[["Pide tu ",0,GRAY],["CMR",1,GRAY],[" o ",0,GRAY],["Cuenta Corriente",1,GRAY]],ts);
+  drawMixed(ctx,W/2,ty+ts*1.2,[["Banco Falabella ",0,GRAY],["100% digital",1,GREEN]],ts);
 
-  if(cardReady) ctx.drawImage(cardImg, cardX, cardY, cardW, cardH);
+  // Bloque QR con pestañas verdes
+  const qbox=0.60*W, qx=(W-qbox)/2, qy=0.335*H;
+  const tabw=0.072*W, tabTop=qy+qbox*0.16, tabBot=qy+qbox*0.84;
+  greenTab(ctx, side, side+tabw, tabTop, tabBot, 'r');
+  greenTab(ctx, W-side-tabw, W-side, tabTop, tabBot, 'l');
+  roundRect(ctx,qx,qy,qbox,qbox,qbox*0.06); ctx.fillStyle='#fff'; ctx.fill();
+  ctx.strokeStyle=BORDER; ctx.lineWidth=3; ctx.stroke();
+  if(d.rut){ const pad=qbox*0.11; drawQR(ctx,d.url,qx+pad,qy+pad,qbox-2*pad); }
 
-  // QR dentro de la caja blanca
-  if(cardReady && d.rut){
-    const bx0 = cardX + QRBOX.x0*cardW, bx1 = cardX + QRBOX.x1*cardW;
-    const by0 = cardY + QRBOX.y0*cardH, by1 = cardY + QRBOX.y1*cardH;
-    const bw = bx1-bx0, bh = by1-by0;
-    const side = Math.min(bw,bh);
-    const pad = side*QR_PAD;
-    const qs = side - pad*2;
-    const qx = bx0 + (bw-qs)/2, qy = by0 + (bh-qs)/2;
-    drawQR(ctx, d.url, qx, qy, qs);
+  // Nombre y apellido (chico, bajo el QR)
+  const name=[d.nombre,d.apellido].filter(Boolean).join(' ').toUpperCase();
+  if(name){
+    const maxW=W-2*side;
+    const ns=fitLine(ctx,name,maxW,0.034*H,0.020*H,true);
+    ctx.font=sans(ns,true); ctx.fillStyle=GRAY; ctx.textAlign='center'; ctx.textBaseline='top';
+    ctx.fillText(name, W/2, qy+qbox+0.022*H, maxW);
   }
 
-  // Nombre y apellido (abajo)
-  if(lines.length){
-    ctx.fillStyle = '#54575b';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-    let ny = cardY + cardH + PIECE.gap*MM;
-    let maxLineW = 0;
-    lines.forEach((t,i)=>{
-      ctx.font = `800 ${fss[i]}px -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif`;
-      ctx.fillText(t, W/2, ny);
-      maxLineW = Math.max(maxLineW, Math.min(ctx.measureText(t).width, maxW));
-      ny += fss[i] + (i<lines.length-1 ? lineGap : 0);
-    });
-    // línea de acento bajo el nombre
-    const lw = Math.min(maxLineW, maxW);
-    ctx.strokeStyle = '#3cab2e'; ctx.lineWidth = accentW;
-    ctx.beginPath();
-    ctx.moveTo(W/2 - lw/2, ny + accentGap);
-    ctx.lineTo(W/2 + lw/2, ny + accentGap);
-    ctx.stroke();
-  }
+  // Escanea el Código QR
+  const es=0.033*H;
+  ctx.font=sans(es,false); ctx.fillStyle=GRAY; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+  ctx.fillText('Escanea el Código QR', W/2, H-0.055*H);
+
+  ctx.textAlign='left';
   return canvas;
 }
 
-/* ===== Actualiza vista previa + estado ===== */
-let rafPending = false;
+/* ===== Estado / vista previa ===== */
+let rafPending=false;
 function render(){
-  if(rafPending) return; rafPending = true;
+  if(rafPending) return; rafPending=true;
   requestAnimationFrame(()=>{
-    rafPending = false;
+    rafPending=false;
     renderPiece($('preview'));
-    const d = currentData();
-
-    // info RUT
-    const info = $('rutinfo');
+    const d=currentData();
+    const info=$('rutinfo');
     if(d.rut && d.dv){
-      const esp = dvEsperado(d.rut);
-      const disp = formatMiles(d.rut)+'-'+d.dv;
-      if(esp === d.dv) info.innerHTML = `<span class="ok">✓ ${disp}</span> <span class="muted">· RUT válido</span>`;
-      else info.innerHTML = `<span class="warn">⚠ ${disp}</span> <span class="muted">· DV esperado: ${esp}</span>`;
-    } else if(d.rut){
-      info.innerHTML = `<span class="muted">${formatMiles(d.rut)} · falta dígito verificador</span>`;
-    } else info.innerHTML = '';
+      const esp=dvEsperado(d.rut), disp=formatMiles(d.rut)+'-'+d.dv;
+      info.innerHTML = esp===d.dv
+        ? `<span class="ok">✓ ${disp}</span> <span class="muted">· RUT válido</span>`
+        : `<span class="warn">⚠ ${disp}</span> <span class="muted">· DV esperado: ${esp}</span>`;
+    } else if(d.rut){ info.innerHTML=`<span class="muted">${formatMiles(d.rut)} · falta dígito verificador</span>`; }
+    else info.innerHTML='';
 
-    // URL del QR
-    $('qrurl').textContent = d.rut ? ('QR → ' + d.url) : 'Ingresa el RUT para generar el QR.';
-    // chip de tamaño
-    const cardW = PIECE.w - PIECE.margin*2;
-    $('sizechip').textContent = `◧ Pieza ${PIECE.w} × ${PIECE.h} mm · tarjeta ${cardW.toFixed(0)} × ${(cardW/CARD_ASPECT).toFixed(0)} mm`;
-
+    $('qrurl').innerHTML = d.rut
+      ? `<b>Enlace del QR</b> (utm_term = ${d.term}):<br>${d.url}`
+      : 'Ingresa el RUT del asesor para generar el QR.';
+    $('sizechip').textContent = `◧ Pieza ${PIECE.w} × ${PIECE.h} mm · lámina 66 × 102 mm`;
     $('download').disabled = !(d.rut && d.dv && d.nombre && d.apellido);
   });
 }
 
-/* ===== Generar PDF ===== */
-function toast(msg){
-  const t = $('toast'); t.textContent = msg; t.classList.add('show');
-  clearTimeout(t._t); t._t = setTimeout(()=>t.classList.remove('show'), 2600);
-}
-
+/* ===== PDF ===== */
+function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2600); }
 function generarPDF(){
-  const d = currentData();
+  const d=currentData();
   if(!(d.rut && d.dv && d.nombre && d.apellido)){ toast('Completa todos los campos'); return; }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({orientation:'portrait', unit:'mm', format:[PIECE.w, PIECE.h]});
-  const canvas = document.createElement('canvas');
-  renderPiece(canvas);
-  const img = canvas.toDataURL('image/png');
-  doc.addImage(img, 'PNG', 0, 0, PIECE.w, PIECE.h, undefined, 'FAST');
-  const slug = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-      .toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  const fname = `carnet-${slug(d.nombre)}-${slug(d.apellido)}-${d.term}`;
-  doc.save(fname + '.pdf');
+  const { jsPDF }=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:[PIECE.w,PIECE.h]});
+  const canvas=document.createElement('canvas'); renderPiece(canvas);
+  doc.addImage(canvas.toDataURL('image/png'),'PNG',0,0,PIECE.w,PIECE.h,undefined,'FAST');
+  const slug=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  doc.save(`carnet-${slug(d.nombre)}-${slug(d.apellido)}-${d.term}.pdf`);
   toast('PDF generado ✓');
 }
 
 /* ===== Listeners ===== */
 ['rut','dv','nombre','apellido'].forEach(id=>{
-  $(id).addEventListener('input', ()=>{
-    if(id==='rut') $('rut').value = formatMiles(cleanDigits($('rut').value));
-    if(id==='dv')  $('dv').value  = cleanDv($('dv').value);
+  $(id).addEventListener('input',()=>{
+    if(id==='rut') $('rut').value=formatMiles(cleanDigits($('rut').value));
+    if(id==='dv')  $('dv').value =cleanDv($('dv').value);
     render();
   });
 });
-$('download').addEventListener('click', generarPDF);
+$('download').addEventListener('click',generarPDF);
 render();
 </script>
 </body>
