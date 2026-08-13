@@ -45,7 +45,7 @@
   .btn.sec{background:#fff;color:var(--fg-d);border:1.5px solid var(--fg);box-shadow:none}
   .previewwrap{display:flex;flex-direction:column;align-items:center}
   .canvasframe{background:repeating-conic-gradient(#eef1ee 0% 25%,#f7faf7 0% 50%) 50%/22px 22px;padding:16px;border-radius:14px;border:1px solid var(--line);width:100%;display:flex;justify-content:center}
-  canvas.preview{width:auto;max-width:100%;height:auto;max-height:520px;border-radius:8px;box-shadow:0 8px 26px rgba(0,0,0,.16);background:#fff}
+  canvas.preview{width:auto;max-width:100%;height:auto;max-height:640px;border-radius:8px;box-shadow:0 8px 26px rgba(0,0,0,.16);background:#fff}
   .sizechip{margin-top:14px;display:inline-flex;gap:8px;background:#eef7ec;color:var(--fg-d);border:1px solid #cfe8c9;padding:7px 13px;border-radius:999px;font-size:12.5px;font-weight:700}
   .linknote{margin:14px 0 0;font-size:11.5px;color:var(--soft);word-break:break-all;background:#fafbfa;border:1px dashed var(--line);border-radius:9px;padding:10px 12px}
   .linknote b{color:var(--ink)}
@@ -71,17 +71,32 @@
 </header>
 
 <div class="tabs">
-  <div class="tab active" id="tab-ind" onclick="setTab('ind')">Individual</div>
-  <div class="tab" id="tab-hoja" onclick="setTab('hoja')">Por hoja · 8 QR</div>
-  <div class="tab" id="tab-dob" onclick="setTab('dob')">Doble cara 62×200</div>
+  <div class="tab active" id="tab-mult" onclick="setTab('mult')">Múltiples · doble cara</div>
+  <div class="tab" id="tab-ind" onclick="setTab('ind')">Individual · doble cara</div>
 </div>
 
 <main>
-  <!-- ===== INDIVIDUAL ===== -->
-  <section class="grid" id="panel-ind">
+  <!-- ===== MÚLTIPLES ===== -->
+  <section class="grid" id="panel-mult">
     <div>
-      <h2>Datos del asesor</h2>
-      <p class="hint">Carnet vertical con código QR para imprimir y termolaminar.</p>
+      <h2>Múltiples asesores · carnet doble cara</h2>
+      <p class="note">Cada asesor genera una franja <b>62 × 200 mm</b> que <b>se dobla al medio</b> y se termolamina (queda 62 × 100 mm, útil por ambos lados). Se imprimen <b>3 franjas por hoja</b> tamaño carta.</p>
+      <div class="ehead"><span>Nombre</span><span>Apellido</span><span>RUT</span><span>DV</span><span></span></div>
+      <div class="rows" id="rows"></div>
+      <button class="btn sec" id="addrow">+ Agregar asesor</button>
+      <button class="btn" id="dl-mult" style="margin-top:12px">⬇ Generar y guardar PDF</button>
+    </div>
+    <div class="previewwrap"><h2 style="align-self:flex-start">Vista previa · hoja</h2>
+      <p class="hint" style="align-self:flex-start">3 franjas por hoja carta (se muestran las primeras).</p>
+      <div class="canvasframe"><canvas id="prev-mult" class="preview"></canvas></div>
+      <div class="sizechip" id="size-mult">◧ Carta · 3 franjas 62 × 200 mm</div></div>
+  </section>
+
+  <!-- ===== INDIVIDUAL (al final) ===== -->
+  <section class="grid hidden" id="panel-ind">
+    <div>
+      <h2>Datos del asesor · carnet doble cara</h2>
+      <p class="hint">Una franja 62 × 200 mm que se dobla al medio y se termolamina.</p>
       <div class="field"><label>RUT <span class="sub">(sin dígito verificador)</span></label>
         <div class="rutrow"><input type="text" id="rut" inputmode="numeric" autocomplete="off" placeholder="12.345.678">
         <input type="text" id="dv" class="dv" maxlength="1" autocomplete="off" placeholder="9"></div>
@@ -91,47 +106,9 @@
       <button class="btn" id="dl-ind">⬇ Generar y guardar PDF</button>
       <div class="linknote" id="qrurl"></div>
     </div>
-    <div class="previewwrap"><h2 style="align-self:flex-start">Vista previa</h2>
-      <p class="hint" style="align-self:flex-start">Así se verá el carnet impreso.</p>
-      <div class="canvasframe"><canvas id="prev-ind" class="preview"></canvas></div>
-      <div class="sizechip" id="size-ind">◧ —</div></div>
-  </section>
-
-  <!-- ===== POR HOJA ===== -->
-  <section class="grid hidden" id="panel-hoja">
-    <div>
-      <h2>Múltiples asesores</h2>
-      <p class="hint">Hasta 8 asesores. Genera una hoja carta con 8 carnets para recortar.</p>
-      <div class="ehead"><span>Nombre</span><span>Apellido</span><span>RUT</span><span>DV</span><span></span></div>
-      <div class="rows" id="rows"></div>
-      <button class="btn sec" id="addrow">+ Agregar asesor</button>
-      <button class="btn" id="dl-hoja" style="margin-top:12px">⬇ Generar hoja (8 QR)</button>
-    </div>
-    <div class="previewwrap"><h2 style="align-self:flex-start">Vista previa · hoja</h2>
-      <p class="hint" style="align-self:flex-start">8 carnets por hoja tamaño carta.</p>
-      <div class="canvasframe"><canvas id="prev-hoja" class="preview" style="max-height:560px"></canvas></div>
-      <div class="sizechip">◧ Carta 216 × 279 mm · 8 carnets</div></div>
-  </section>
-
-  <!-- ===== DOBLE CARA ===== -->
-  <section class="grid hidden" id="panel-dob">
-    <div>
-      <h2>Carnet doble cara · 62 × 200 mm</h2>
-      <p class="note"><b>Se dobla al medio</b> (a los 100 mm) y se termolamina. Queda 62 × 100 mm útil por ambos lados:
-        <br>• <b>Cara A:</b> QR para abrir cuenta / CMR.
-        <br>• <b>Cara B:</b> venta de seguro (códigos de barra Plan 1 y 2, QR para aceptar condiciones, resumen de planes) y comparativo de las 3 CMR.</p>
-      <div class="field"><label>RUT del asesor <span class="sub">(sin DV)</span></label>
-        <div class="rutrow"><input type="text" id="d-rut" inputmode="numeric" autocomplete="off" placeholder="12.345.678">
-        <input type="text" id="d-dv" class="dv" maxlength="1" autocomplete="off" placeholder="9"></div>
-        <div class="rutinfo" id="d-rutinfo"></div></div>
-      <div class="field"><label>Nombre</label><input type="text" id="d-nombre" autocomplete="off" placeholder="Sebastián"></div>
-      <div class="field"><label>Apellido</label><input type="text" id="d-apellido" autocomplete="off" placeholder="Soto Beltrán"></div>
-      <button class="btn" id="dl-dob">⬇ Generar doble cara (PDF)</button>
-      <div class="linknote">Datos del comparador y seguro tomados de Banco Falabella / Seguros Falabella. Las 3 tarjetas son ilustrativas; puedes enviarme las imágenes oficiales para reemplazarlas.</div>
-    </div>
     <div class="previewwrap"><h2 style="align-self:flex-start">Vista previa · doble cara</h2>
       <p class="hint" style="align-self:flex-start">Franja 62 × 200 mm (se dobla al medio).</p>
-      <div class="canvasframe"><canvas id="prev-dob" class="preview" style="max-height:640px"></canvas></div>
+      <div class="canvasframe"><canvas id="prev-ind" class="preview"></canvas></div>
       <div class="sizechip">◧ 62 × 200 mm · doblado 62 × 100 mm</div></div>
   </section>
 </main>
@@ -144,25 +121,33 @@
 <!--__LIB_BARCODE__-->
 <script>
 /* ===== assets ===== */
-const LOGOS3_SRC="__LOGOS3_B64__", CMR_SRC="__CMR_B64__", UMB_SRC="__UMBRELLA_B64__";
-const LOGOS3_RATIO=1530/275;                 // ancho/alto (3 logos)
-const VRATIO=60/92;                          // ancho/alto tarjeta vertical
+const IMG={logos3:"__LOGOS3_B64__",cmr:"__CMR_B64__",umb:"__UMBRELLA_B64__",
+  seg:"__SEG_B64__",green:"__GREEN_B64__",gray:"__GRAY_B64__",black:"__BLACK_B64__"};
+const LOGOS3_RATIO=1530/275, VRATIO=60/92, CARD_RATIO=388/260;
 const BASE_URL="https://www.bancofalabella.cl/pre-landing?utm_source=Falabella&utm_medium=QRregional&utm_content=costanera-center-qr-unificado&utm_campaign=apertura-falabella&utm_term=__TERM__&store_id=3660";
-const SEGURO_QR="https://bit.ly/3HGuZdF";    // aceptar condiciones del seguro
+const SEGURO_QR="https://bit.ly/3HGuZdF";
+const UF_REF="UF 01-08-2026 · $40.845";
 const PLANES=[
-  {n:'PLAN 1', barcode:'2014972205002', mensual:'$5.200', uf:'UF 0,14', suma:'UF 50', muerte:'UF 100'},
-  {n:'PLAN 2', barcode:'2014972233005', mensual:'$7.800', uf:'UF 0,21', suma:'UF 100', muerte:'UF 100'}
+  {n:'PLAN 1', barcode:'2014972205002', mensual:'$5.700'},
+  {n:'PLAN 2', barcode:'2014972233005', mensual:'$8.600'}
 ];
+const TABLA=[['Cobertura','Plan 1','Plan 2'],['Suma asegurada','$2.042.200','$4.084.500'],
+  ['Precio mín. producto','$24.500','$24.500'],['Muerte accidental','$4.084.500','$4.084.500'],
+  ['Precio mensual','$5.700','$8.600']];
 const CMRS=[
-  {name:'CMR Mastercard', tier:'', color:'#4aa829', uf:'UF 0,135', bul:['CMR Puntos','0% comisión compras int.','Seguro compra protegida']},
-  {name:'CMR Premium', tier:'Premium', color:'#8a8f96', uf:'UF 0,22', bul:['Asist. médica USD 25.000','Sala VIP aeropuerto','Concierge · garantía ext.']},
-  {name:'CMR Elite', tier:'Elite', color:'#2b2b2b', uf:'UF 0,35', bul:['Asist. médica USD 150.000','Transfer aeropuerto','Hoteles de lujo · Pacific Club']}
+  {img:'green', tier:'Clásica', uf:'UF 0,135', clp:'$5.500', pts:'1 año',
+   bul:['Despacho gratis','Protección robo cajeros','Traslado aeropuerto']},
+  {img:'gray', tier:'Premium', uf:'UF 0,22', clp:'$9.000', pts:'2 años',
+   bul:['Asist. médica USD 25.000','Salón VIP Primeclass','Seg. cancelación viaje']},
+  {img:'black', tier:'Elite', uf:'UF 0,35', clp:'$14.300', pts:'2 años',
+   bul:['Asist. médica USD 150.000','Salón VIP Pacific Club','Seg. demora equipaje']}
 ];
 const GRAY='#54575b', GREEN='#3cab2e', BORDER='#d6d9dc';
 
 const $=id=>document.getElementById(id);
-const logos3=new Image(); let l3r=false; logos3.onload=()=>{l3r=true;renderAll();}; logos3.src=LOGOS3_SRC;
-$('lg-cmr').src=CMR_SRC; $('lg-umb').src=UMB_SRC;
+const imgs={}; let ready=0; const total=Object.keys(IMG).length;
+for(const k in IMG){const im=new Image();im.onload=()=>{ready++;if(ready===total)renderAll();};im.src=IMG[k];imgs[k]=im;}
+$('lg-cmr').src=IMG.cmr; $('lg-umb').src=IMG.umb;
 
 /* ===== RUT ===== */
 const cd=s=>(s||'').replace(/[^0-9]/g,''), cdv=s=>(s||'').replace(/[^0-9kK]/g,'').toUpperCase().slice(0,1);
@@ -178,116 +163,120 @@ function qrMods(ctx,text,x,y,size,ec){const qr=qrcode(0,ec||'Q');qr.addData(text
   for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(qr.isDark(r,k))ctx.fillRect(Math.floor(x+k*c),Math.floor(y+r*c),Math.ceil(c)+.5,Math.ceil(c)+.5);}
 function mixed(ctx,cx,top,parts,size){const w=parts.map(([t,b])=>{ctx.font=sans(size,b);return ctx.measureText(t).width;});const tot=w.reduce((a,b)=>a+b,0);
   let x=cx-tot/2;ctx.textBaseline='top';ctx.textAlign='left';parts.forEach(([t,b,c],i)=>{ctx.font=sans(size,b);ctx.fillStyle=c;ctx.fillText(t,x,top);x+=w[i];});}
-function fit(ctx,t,maxW,st,mn,b){let s=st;do{ctx.font=sans(s,b);if(ctx.measureText(t).width<=maxW)break;s--;}while(s>mn);return s;}
+function txt(ctx,t,x,y,px,b,color,align){ctx.font=sans(px,b);ctx.fillStyle=color||GRAY;ctx.textAlign=align||'left';ctx.textBaseline='alphabetic';ctx.fillText(t,x,y);}
+function short(ctx,t,maxW){let s=t;while(ctx.measureText(s).width>maxW&&s.length>3){s=s.slice(0,-2);}return s.length<t.length?s.trim()+'…':s;}
 function greenTab(ctx,x0,x1,top,bot,dir){const w=x1-x0;rr(ctx,x0,top,w,bot-top,w*0.28);ctx.fillStyle=GREEN;ctx.fill();
-  const cx=(x0+x1)/2,cy=(top+bot)/2,ch=w*0.30,cw=w*0.24;ctx.strokeStyle='#fff';ctx.lineWidth=Math.max(5,w*0.15);ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();
+  const cx=(x0+x1)/2,cy=(top+bot)/2,ch=w*0.30,cw=w*0.24;ctx.strokeStyle='#fff';ctx.lineWidth=Math.max(4,w*0.15);ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();
   if(dir==='r'){ctx.moveTo(cx-cw/2,cy-ch);ctx.lineTo(cx+cw/2,cy);ctx.lineTo(cx-cw/2,cy+ch);}else{ctx.moveTo(cx+cw/2,cy-ch);ctx.lineTo(cx-cw/2,cy);ctx.lineTo(cx+cw/2,cy+ch);}ctx.stroke();}
-function barcode(value){const c=document.createElement('canvas');
-  try{JsBarcode(c,value,{format:'EAN13',width:2,height:52,fontSize:15,margin:2,displayValue:true});}
-  catch(e){try{JsBarcode(c,value,{format:'CODE128',width:2,height:52,fontSize:15,margin:2,displayValue:true});}catch(e2){}}
-  return c;}
+function barcode(v){const c=document.createElement('canvas');
+  try{JsBarcode(c,v,{format:'EAN13',width:2,height:52,fontSize:15,margin:2,displayValue:true});}
+  catch(e){try{JsBarcode(c,v,{format:'CODE128',width:2,height:52,fontSize:15,margin:2,displayValue:true});}catch(e2){}}return c;}
 
-/* ===== TARJETA VERTICAL (cara A) ===== */
+/* ===== CARA A: tarjeta vertical ===== */
 function drawVCard(ctx,x,y,w,entry){
   const h=w/VRATIO;
-  ctx.fillStyle='#fff'; ctx.fillRect(x,y,w,h);
-  rr(ctx,x+3,y+3,w-6,h-6,w*0.05); ctx.strokeStyle=BORDER; ctx.lineWidth=Math.max(2,w*0.006); ctx.stroke();
-  // logos
-  const lw=0.80*w, lh=lw/LOGOS3_RATIO, ly=y+0.06*h;
-  if(l3r) ctx.drawImage(logos3,x+(w-lw)/2,ly,lw,lh);
-  // texto original
-  const ts=0.035*h, ty=ly+lh+0.045*h;
+  ctx.fillStyle='#fff';ctx.fillRect(x,y,w,h);
+  rr(ctx,x+3,y+3,w-6,h-6,w*0.05);ctx.strokeStyle=BORDER;ctx.lineWidth=Math.max(2,w*0.006);ctx.stroke();
+  const lw=0.80*w,lh=lw/LOGOS3_RATIO,ly=y+0.06*h;
+  if(imgs.logos3.complete)ctx.drawImage(imgs.logos3,x+(w-lw)/2,ly,lw,lh);
+  const ts=0.035*h,ty=ly+lh+0.045*h;
   mixed(ctx,x+w/2,ty,[["Pide tu ",0,GRAY],["CMR",1,GRAY],[" o ",0,GRAY],["Cuenta Corriente",1,GRAY]],ts);
   mixed(ctx,x+w/2,ty+ts*1.22,[["Banco Falabella ",0,GRAY],["100% digital",1,GREEN]],ts);
-  // QR + pestañas
-  const qbox=0.60*w, qx=x+(w-qbox)/2, qy=y+0.40*h, side=0.055*w;
-  const tabw=0.072*w, tt=qy+qbox*0.16, tb=qy+qbox*0.84;
-  greenTab(ctx,x+side,x+side+tabw,tt,tb,'r'); greenTab(ctx,x+w-side-tabw,x+w-side,tt,tb,'l');
-  rr(ctx,qx,qy,qbox,qbox,qbox*0.06); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle=BORDER; ctx.lineWidth=Math.max(2,w*0.006); ctx.stroke();
-  if(entry&&entry.rut){
-    const pad=qbox*0.11, qs=qbox-2*pad;
+  const qbox=0.60*w,qx=x+(w-qbox)/2,qy=y+0.40*h,side=0.055*w;
+  const tabw=0.072*w,tt=qy+qbox*0.16,tb=qy+qbox*0.84;
+  greenTab(ctx,x+side,x+side+tabw,tt,tb,'r');greenTab(ctx,x+w-side-tabw,x+w-side,tt,tb,'l');
+  rr(ctx,qx,qy,qbox,qbox,qbox*0.06);ctx.fillStyle='#fff';ctx.fill();ctx.strokeStyle=BORDER;ctx.lineWidth=Math.max(2,w*0.006);ctx.stroke();
+  if(entry&&entry.rut){const pad=qbox*0.11,qs=qbox-2*pad;
     qrMods(ctx,entry.url,qx+(qbox-qs)/2,qy+pad,qs,'Q');
     const nm=[entry.nombre,entry.apellido].filter(Boolean).join(' ').toUpperCase();
-    if(nm){const zt=qy+pad+qs, zb=qy+qbox, maxW=qbox*0.94;
-      let fs=Math.min((zb-zt)*0.6,qbox*0.1); ctx.font=sans(fs,true);
+    if(nm){const zt=qy+pad+qs,zb=qy+qbox,maxW=qbox*0.94;let fs=Math.min((zb-zt)*0.6,qbox*0.1);ctx.font=sans(fs,true);
       while(ctx.measureText(nm).width>maxW&&fs>7){fs--;ctx.font=sans(fs,true);}
-      ctx.fillStyle='#111418';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(nm,qx+qbox/2,(zt+zb)/2,maxW);}
-  }
-  ctx.font=sans(0.033*h,false); ctx.fillStyle=GRAY; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
-  ctx.fillText('Escanea el Código QR', x+w/2, y+0.955*h);
+      ctx.fillStyle='#111418';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(nm,qx+qbox/2,(zt+zb)/2,maxW);}}
+  ctx.font=sans(0.033*h,false);ctx.fillStyle=GRAY;ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ctx.fillText('Escanea el Código QR',x+w/2,y+0.955*h);ctx.textAlign='left';
+}
+
+/* ===== CARA B: seguro + comparador ===== */
+function drawSideB(ctx,x,y,w,hh){
+  ctx.fillStyle='#fff';ctx.fillRect(x,y,w,hh);
+  const m=0.055*w, iw=w-2*m; let cy=y+0.012*hh;
+  // logo seguro
+  const lgH=0.075*hh, lgW=lgH*(imgs.seg.width/imgs.seg.height);
+  if(imgs.seg.complete)ctx.drawImage(imgs.seg,x+(w-lgW)/2,cy,lgW,lgH);
+  cy+=lgH+0.012*hh;
+  // barras
+  const bw=(iw-0.03*w)/2;
+  PLANES.forEach((p,i)=>{const bx=x+m+i*(bw+0.03*w);
+    txt(ctx,p.n,bx+bw/2,cy+0.014*hh,0.015*hh,true,'#2b2b2b','center');
+    const bc=barcode(p.barcode),bh2=bw*bc.height/bc.width;
+    ctx.drawImage(bc,bx,cy+0.019*hh,bw,bh2);
+    txt(ctx,p.mensual+' /mes',bx+bw/2,cy+0.019*hh+bh2+0.015*hh,0.014*hh,true,GREEN,'center');});
+  cy+=0.145*hh;
+  // QR aceptar (con zona blanca de silencio para que sea escaneable)
+  const qs=0.145*hh, qpad=qs*0.13, qbx=x+m, qby=cy, qtot=qs+2*qpad;
+  rr(ctx,qbx,qby,qtot,qtot,7);ctx.fillStyle='#fff';ctx.fill();ctx.strokeStyle=GREEN;ctx.lineWidth=2;ctx.stroke();
+  qrMods(ctx,SEGURO_QR,qbx+qpad,qby+qpad,qs,'M');
+  const tx=qbx+qtot+0.03*w;
+  txt(ctx,'Contrata en caja y',tx,cy+0.04*hh,0.015*hh,true,'#2b2b2b','left');
+  txt(ctx,'acepta las condiciones',tx,cy+0.04*hh+0.018*hh,0.015*hh,true,'#2b2b2b','left');
+  txt(ctx,'del seguro aquí →',tx,cy+0.04*hh+0.036*hh,0.014*hh,false,GRAY,'left');
+  cy+=qtot+0.016*hh;
+  // tabla
+  const rh=0.022*hh,c0=x+m,c1=x+m+iw*0.50,c2=x+m+iw*0.75;
+  TABLA.forEach((r,i)=>{const ry=cy+i*rh;if(i===0){ctx.fillStyle='#eef7ec';ctx.fillRect(c0,ry,iw,rh);}
+    txt(ctx,r[0],c0+3,ry+rh*0.72,0.0135*hh,i===0,'#2b2b2b','left');
+    txt(ctx,r[1],c1,ry+rh*0.72,0.0135*hh,i===0,GRAY,'left');
+    txt(ctx,r[2],c2,ry+rh*0.72,0.0135*hh,i===0,GRAY,'left');
+    ctx.strokeStyle='#eef1ee';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(c0,ry+rh);ctx.lineTo(c0+iw,ry+rh);ctx.stroke();});
+  cy+=TABLA.length*rh+0.004*hh;
+  txt(ctx,UF_REF,x+w/2,cy+0.013*hh,0.011*hh,false,'#a0a4a8','center'); cy+=0.026*hh;
+  // comparador CMR
+  txt(ctx,'Compara tu tarjeta CMR',x+w/2,cy+0.016*hh,0.018*hh,true,'#2b2b2b','center'); cy+=0.03*hh;
+  const gw=(iw-0.04*w)/3;
+  CMRS.forEach((c,i)=>{const gx=x+m+i*(gw+0.02*w);
+    const ci=imgs[c.img], ch2=gw/CARD_RATIO;
+    if(ci.complete)ctx.drawImage(ci,gx,cy,gw,ch2);
+    let ty2=cy+ch2+0.02*hh;
+    txt(ctx,c.tier,gx+gw/2,ty2,0.015*hh,true,'#2b2b2b','center');
+    txt(ctx,c.uf+'/año',gx+gw/2,ty2+0.018*hh,0.013*hh,true,GREEN,'center');
+    txt(ctx,'aprox. '+c.clp,gx+gw/2,ty2+0.033*hh,0.011*hh,false,'#a0a4a8','center');
+    txt(ctx,'Puntos: '+c.pts,gx+gw/2,ty2+0.048*hh,0.012*hh,true,GRAY,'center');
+    let by=ty2+0.066*hh;
+    c.bul.forEach(b=>{ctx.font=sans(0.0115*hh,false);ctx.fillStyle=GRAY;ctx.textAlign='left';ctx.textBaseline='alphabetic';
+      ctx.fillText(short(ctx,'· '+b,gw),gx,by);by+=0.017*hh;});});
+  cy+=0.03*hh; // pie
+  txt(ctx,'Premium y Elite suman los beneficios de la categoría anterior.',x+w/2,y+hh-0.01*hh,0.0105*hh,false,'#a0a4a8','center');
   ctx.textAlign='left';
+}
+
+/* ===== DOBLE CARA (franja 62x200) ===== */
+const STRIP={wmm:62,hmm:200};
+function drawStrip(ctx,x,y,w,entry){
+  const h=w/(STRIP.wmm/STRIP.hmm), half=h/2;
+  ctx.fillStyle='#fff';ctx.fillRect(x,y,w,h);
+  // Cara A arriba
+  const cardW=Math.min(w*0.92,half*0.94*VRATIO),cardH=cardW/VRATIO;
+  drawVCard(ctx,x+(w-cardW)/2,y+(half-cardH)/2,cardW,entry);
+  // doblez
+  ctx.save();ctx.setLineDash([7,6]);ctx.strokeStyle='#b9bdc1';ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(x,y+half);ctx.lineTo(x+w,y+half);ctx.stroke();ctx.restore();
+  txt(ctx,'▲ doblar aquí ▲',x+w/2,y+half-3,w*0.03,false,'#b9bdc1','center');ctx.textAlign='left';
+  // Cara B abajo (rotada 180)
+  ctx.save();ctx.translate(x+w,y+h);ctx.rotate(Math.PI);drawSideB(ctx,0,0,w,half);ctx.restore();
   return h;
 }
 
-/* ===== CARA B (seguro + comparador), dibujada vertical en marco w×hh ===== */
-function txt(ctx,t,x,y,px,b,color,align){ctx.font=sans(px,b);ctx.fillStyle=color||GRAY;ctx.textAlign=align||'left';ctx.textBaseline='alphabetic';ctx.fillText(t,x,y);}
-function drawSideB(ctx,x,y,w,hh){
-  ctx.fillStyle='#fff'; ctx.fillRect(x,y,w,hh);
-  const m=0.06*w, iw=w-2*m; let cy=y+0.035*hh;
-  // título
-  txt(ctx,'Seguro de Compra Protegida',x+w/2,cy+0.02*hh,0.024*hh,true,'#2b2b2b','center');
-  txt(ctx,'SegurosFalabella.com',x+w/2,cy+0.042*hh,0.014*hh,false,GREEN,'center');
-  cy+=0.06*hh;
-  // barras Plan 1 / Plan 2
-  const bw=(iw-0.03*w)/2;
-  PLANES.forEach((p,i)=>{const bx=x+m+i*(bw+0.03*w);
-    txt(ctx,p.n,bx+bw/2,cy+0.016*hh,0.016*hh,true,'#2b2b2b','center');
-    const bc=barcode(p.barcode); const bh2=bw*bc.height/bc.width;
-    ctx.drawImage(bc,bx,cy+0.022*hh,bw,bh2);
-    txt(ctx,p.mensual+' /mes',bx+bw/2,cy+0.022*hh+bh2+0.016*hh,0.014*hh,true,GREEN,'center');
-  });
-  cy+=0.155*hh;
-  // QR aceptar condiciones
-  const qs=0.16*hh; const qx=x+m;
-  rr(ctx,qx-4,cy-4,qs+8,qs+8,8);ctx.strokeStyle=GREEN;ctx.lineWidth=2;ctx.stroke();
-  qrMods(ctx,SEGURO_QR,qx,cy,qs,'M');
-  txt(ctx,'Contrata en caja y',x+m+qs+0.03*w,cy+0.05*hh,0.016*hh,true,'#2b2b2b','left');
-  txt(ctx,'acepta las condiciones',x+m+qs+0.03*w,cy+0.05*hh+0.02*hh,0.016*hh,true,'#2b2b2b','left');
-  txt(ctx,'aquí →',x+m+qs+0.03*w,cy+0.05*hh+0.04*hh,0.016*hh,false,GRAY,'left');
-  cy+=qs+0.03*hh;
-  // tabla planes/coberturas
-  const rowsT=[['Cobertura','Plan 1','Plan 2'],['Suma asegurada','UF 50','UF 100'],['Precio mínimo prod.','UF 0,6','UF 0,6'],['Muerte accidental','UF 100','UF 100'],['Precio mensual','UF 0,14','UF 0,21']];
-  const rh=0.026*hh, c0=x+m, c1=x+m+iw*0.52, c2=x+m+iw*0.76;
-  rowsT.forEach((r,i)=>{const ry=cy+i*rh;
-    if(i===0){ctx.fillStyle='#eef7ec';ctx.fillRect(c0,ry,iw,rh);}
-    txt(ctx,r[0],c0+4,ry+rh*0.72,0.015*hh,i===0,'#2b2b2b','left');
-    txt(ctx,r[1],c1,ry+rh*0.72,0.015*hh,i===0,GRAY,'left');
-    txt(ctx,r[2],c2,ry+rh*0.72,0.015*hh,i===0,GRAY,'left');
-    ctx.strokeStyle='#eef1ee';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(c0,ry+rh);ctx.lineTo(c0+iw,ry+rh);ctx.stroke();});
-  cy+=rowsT.length*rh+0.02*hh;
-  // separador
-  txt(ctx,'Compara tu tarjeta CMR',x+w/2,cy+0.02*hh,0.02*hh,true,'#2b2b2b','center'); cy+=0.035*hh;
-  // 3 mini tarjetas CMR
-  const gw=(iw-0.04*w)/3;
-  CMRS.forEach((c,i)=>{const gx=x+m+i*(gw+0.02*w);
-    rr(ctx,gx,cy,gw,gw*0.62,7);ctx.fillStyle=c.color;ctx.fill();
-    txt(ctx,'CMR',gx+gw*0.12,cy+gw*0.4,gw*0.22,true,'#fff','left');
-    // chip
-    ctx.fillStyle='rgba(255,255,255,.75)';rr(ctx,gx+gw*0.72,cy+gw*0.16,gw*0.16,gw*0.12,2);ctx.fill();
-    let ty2=cy+gw*0.62+0.022*hh;
-    txt(ctx,(c.tier||'Clásica'),gx+gw/2,ty2,0.016*hh,true,'#2b2b2b','center');
-    txt(ctx,c.uf+'/año',gx+gw/2,ty2+0.02*hh,0.015*hh,true,GREEN,'center');
-    ctx.textAlign='left';ctx.textBaseline='alphabetic';
-    c.bul.forEach((b,j)=>{ctx.font=sans(0.0125*hh,false);ctx.fillStyle=GRAY;
-      ctx.fillText(shorten(ctx,'· '+b,gw), gx, ty2+0.045*hh+j*0.019*hh);});
-  });
-}
-function shorten(ctx,t,maxW){let s=t;while(ctx.measureText(s).width>maxW&&s.length>3){s=s.slice(0,-2);}return s.length<t.length?s.trim()+'…':s;}
-
 /* ===== INDIVIDUAL ===== */
-const IND={wmm:60}; const IMM=20;
+const DMM=17;
 function curInd(){return mk($('rut').value,$('dv').value,$('nombre').value,$('apellido').value);}
-function renderInd(cv){const w=Math.round(IND.wmm*IMM),h=Math.round(w/VRATIO);cv.width=w;cv.height=h;
-  const ctx=cv.getContext('2d');ctx.imageSmoothingQuality='high';drawVCard(ctx,0,0,w,curInd());}
+function renderInd(cv){const w=Math.round(STRIP.wmm*DMM),h=Math.round(STRIP.hmm*DMM);cv.width=w;cv.height=h;
+  const ctx=cv.getContext('2d');ctx.imageSmoothingQuality='high';drawStrip(ctx,0,0,w,curInd());}
 function refreshInd(){renderInd($('prev-ind'));const d=curInd(),info=$('rutinfo');
-  if(d.rut&&d.dv){const e=dvEsp(d.rut),dp=miles(d.rut)+'-'+d.dv;
-    info.innerHTML=e===d.dv?`<span class="ok">✓ ${dp}</span> <span class="muted">· RUT válido</span>`:`<span class="warn">⚠ ${dp}</span> <span class="muted">· DV esperado: ${e}</span>`;}
+  if(d.rut&&d.dv){const e=dvEsp(d.rut),dp=miles(d.rut)+'-'+d.dv;info.innerHTML=e===d.dv?`<span class="ok">✓ ${dp}</span> <span class="muted">· RUT válido</span>`:`<span class="warn">⚠ ${dp}</span> <span class="muted">· DV esperado: ${e}</span>`;}
   else if(d.rut)info.innerHTML=`<span class="muted">${miles(d.rut)} · falta dígito verificador</span>`;else info.innerHTML='';
   $('qrurl').innerHTML=d.rut?`<b>Enlace del QR</b> (utm_term = ${d.term}):<br>${d.url}`:'Ingresa el RUT del asesor para generar el QR.';
-  $('size-ind').textContent=`◧ Carnet ${IND.wmm} × ${(IND.wmm/VRATIO).toFixed(0)} mm · cabe en lámina 66 × 102 mm`;
   $('dl-ind').disabled=!(d.rut&&d.dv&&d.nombre&&d.apellido);}
 
-/* ===== POR HOJA (4x2 verticales) ===== */
+/* ===== MÚLTIPLES (3 franjas por hoja carta) ===== */
 let rows=[];
 function rowEl(i){const r=rows[i],d=document.createElement('div');d.className='erow';
   d.innerHTML=`<input type="text" placeholder="Nombre" value="${r.nombre||''}" data-k="nombre">
@@ -296,71 +285,46 @@ function rowEl(i){const r=rows[i],d=document.createElement('div');d.className='e
     <input type="text" class="dv" maxlength="1" placeholder="DV" value="${r.dv||''}" data-k="dv">
     <button class="rm">×</button>`;
   d.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',()=>{let v=inp.value,k=inp.dataset.k;
-    if(k==='rut'){v=miles(cd(v));inp.value=v;}if(k==='dv'){v=cdv(v);inp.value=v;}rows[i][k]=v;renderHoja($('prev-hoja'));}));
+    if(k==='rut'){v=miles(cd(v));inp.value=v;}if(k==='dv'){v=cdv(v);inp.value=v;}rows[i][k]=v;renderMult($('prev-mult'));}));
   d.querySelector('.rm').addEventListener('click',()=>{rows.splice(i,1);if(!rows.length)rows.push({});drawRows();});
   return d;}
-function drawRows(){const c=$('rows');c.innerHTML='';rows.forEach((_,i)=>c.appendChild(rowEl(i)));renderHoja($('prev-hoja'));$('addrow').disabled=rows.length>=8;}
-const SHEET={wmm:216,hmm:279,cols:4,rowsN:2,mx:10,my:12,gx:6,gy:10}; const HMM=6;
-function renderHoja(cv){const W=Math.round(SHEET.wmm*HMM),H=Math.round(SHEET.hmm*HMM);cv.width=W;cv.height=H;
+function drawRows(){const c=$('rows');c.innerHTML='';rows.forEach((_,i)=>c.appendChild(rowEl(i)));renderMult($('prev-mult'));$('addrow').disabled=rows.length>=24;}
+const SHEET={wmm:216,hmm:279,per:3,mx:14,my:22,gx:11}; const HMM=4;
+function stripLayout(){const sw=(SHEET.wmm-2*SHEET.mx-(SHEET.per-1)*SHEET.gx)/SHEET.per; return {sw,sh:sw/(STRIP.wmm/STRIP.hmm)};}
+function renderMultPage(ctx,ents){const {sw,sh}=stripLayout();
+  for(let i=0;i<SHEET.per;i++){const sx=(SHEET.mx+i*(sw+SHEET.gx))*HMM, sy=SHEET.my*HMM;
+    if(ents[i]) drawStrip(ctx,sx,sy,sw*HMM,ents[i]);}}
+function renderMult(cv){const W=Math.round(SHEET.wmm*HMM),H=Math.round(SHEET.hmm*HMM);cv.width=W;cv.height=H;
   const ctx=cv.getContext('2d');ctx.imageSmoothingQuality='high';ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
-  const cw=(SHEET.wmm-2*SHEET.mx-(SHEET.cols-1)*SHEET.gx)/SHEET.cols;
-  const ch=(SHEET.hmm-2*SHEET.my-(SHEET.rowsN-1)*SHEET.gy)/SHEET.rowsN;
-  let cardW=Math.min(cw,ch*VRATIO);
-  const ents=rows.map(r=>mk(r.rut,r.dv,r.nombre,r.apellido));
-  for(let i=0;i<8;i++){const c=i%SHEET.cols,rw=(i/SHEET.cols)|0;
-    const cellX=(SHEET.mx+c*(cw+SHEET.gx))*HMM, cellY=(SHEET.my+rw*(ch+SHEET.gy))*HMM;
-    const cardWpx=cardW*HMM, cardHpx=cardWpx/VRATIO;
-    drawVCard(ctx,cellX+(cw*HMM-cardWpx)/2,cellY+(ch*HMM-cardHpx)/2,cardWpx,ents[i]);}}
+  const ents=rows.map(r=>mk(r.rut,r.dv,r.nombre,r.apellido));renderMultPage(ctx,ents.slice(0,3));}
 
-/* ===== DOBLE CARA 62x200 ===== */
-const DOB={wmm:62,hmm:200}; const DMM=17;
-function curDob(){return mk($('d-rut').value,$('d-dv').value,$('d-nombre').value,$('d-apellido').value);}
-function renderDob(cv){const W=Math.round(DOB.wmm*DMM),H=Math.round(DOB.hmm*DMM);cv.width=W;cv.height=H;
-  const ctx=cv.getContext('2d');ctx.imageSmoothingQuality='high';ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
-  // Cara A (arriba): tarjeta vertical centrada en la mitad superior
-  const half=H/2, cardW=Math.min(W*0.92, half*0.94*VRATIO), cardH=cardW/VRATIO;
-  drawVCard(ctx,(W-cardW)/2,(half-cardH)/2,cardW,curDob());
-  // línea de doblez
-  ctx.save();ctx.setLineDash([8,7]);ctx.strokeStyle='#b9bdc1';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,half);ctx.lineTo(W,half);ctx.stroke();ctx.restore();
-  txt(ctx,'▲ doblar aquí ▲',W/2,half-4,10,false,'#b9bdc1','center');
-  // Cara B (abajo) rotada 180°
-  ctx.save();ctx.translate(W,H);ctx.rotate(Math.PI);drawSideB(ctx,0,0,W,half);ctx.restore();
-}
-
-/* ===== guardar/compartir PDF ===== */
+/* ===== guardar/compartir ===== */
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2600);}
-async function savePDF(doc,filename){
-  const blob=doc.output('blob'); const file=new File([blob],filename,{type:'application/pdf'});
-  if(navigator.canShare&&navigator.canShare({files:[file]})){
-    try{await navigator.share({files:[file],title:filename}); toast('Listo para guardar/compartir'); return;}catch(e){if(e&&e.name==='AbortError')return;}
-  }
-  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();
-  setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},1500); toast('PDF descargado ✓');
-}
+async function savePDF(doc,fn){const blob=doc.output('blob'),file=new File([blob],fn,{type:'application/pdf'});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:fn});toast('Listo para guardar/compartir');return;}catch(e){if(e&&e.name==='AbortError')return;}}
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=fn;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},1500);toast('PDF descargado ✓');}
 const slug=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 function pdfInd(){const d=curInd();if(!(d.rut&&d.dv&&d.nombre&&d.apellido)){toast('Completa todos los campos');return;}
-  const {jsPDF}=window.jspdf,h=IND.wmm/VRATIO;const doc=new jsPDF({orientation:'portrait',unit:'mm',format:[IND.wmm,h]});
-  const cv=document.createElement('canvas');renderInd(cv);doc.addImage(cv.toDataURL('image/png'),'PNG',0,0,IND.wmm,h,undefined,'FAST');
-  savePDF(doc,`carnet-${slug(d.nombre)}-${slug(d.apellido)}-${d.term}.pdf`);}
-function pdfHoja(){const ents=rows.map(r=>mk(r.rut,r.dv,r.nombre,r.apellido)).filter(e=>e.rut&&e.dv&&e.nombre&&e.apellido);
+  const {jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'portrait',unit:'mm',format:[STRIP.wmm,STRIP.hmm]});
+  const cv=document.createElement('canvas');renderInd(cv);doc.addImage(cv.toDataURL('image/png'),'PNG',0,0,STRIP.wmm,STRIP.hmm,undefined,'FAST');
+  savePDF(doc,`carnet-doble-${slug(d.nombre)}-${slug(d.apellido)}-${d.term}.pdf`);}
+function pdfMult(){const ents=rows.map(r=>mk(r.rut,r.dv,r.nombre,r.apellido)).filter(e=>e.rut&&e.dv&&e.nombre&&e.apellido);
   if(!ents.length){toast('Agrega al menos un asesor completo');return;}
   const {jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'letter'});
-  const cv=document.createElement('canvas');renderHoja(cv);doc.addImage(cv.toDataURL('image/png'),'PNG',0,0,SHEET.wmm,SHEET.hmm,undefined,'FAST');
-  savePDF(doc,`carnets-hoja-${ents.length}.pdf`);}
-function pdfDob(){const d=curDob();if(!(d.rut&&d.dv&&d.nombre&&d.apellido)){toast('Completa los datos del asesor');return;}
-  const {jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'portrait',unit:'mm',format:[DOB.wmm,DOB.hmm]});
-  const cv=document.createElement('canvas');renderDob(cv);doc.addImage(cv.toDataURL('image/png'),'PNG',0,0,DOB.wmm,DOB.hmm,undefined,'FAST');
-  savePDF(doc,`carnet-doble-${slug(d.nombre)}-${slug(d.apellido)}-${d.term}.pdf`);}
+  for(let p=0;p*3<ents.length;p++){if(p>0)doc.addPage('letter','portrait');
+    const cv=document.createElement('canvas');renderMult2(cv,ents.slice(p*3,p*3+3));doc.addImage(cv.toDataURL('image/png'),'PNG',0,0,SHEET.wmm,SHEET.hmm,undefined,'FAST');}
+  savePDF(doc,`carnets-doble-${ents.length}.pdf`);}
+function renderMult2(cv,ents){const W=Math.round(SHEET.wmm*HMM),H=Math.round(SHEET.hmm*HMM);cv.width=W;cv.height=H;
+  const ctx=cv.getContext('2d');ctx.imageSmoothingQuality='high';ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);renderMultPage(ctx,ents);}
 
 /* ===== tabs / init ===== */
-function setTab(t){['ind','hoja','dob'].forEach(k=>{$('tab-'+k).classList.toggle('active',k===t);$('panel-'+k).classList.toggle('hidden',k!==t);});renderAll();}
-let raf=false;function renderAll(){if(raf)return;raf=true;requestAnimationFrame(()=>{raf=false;refreshInd();renderHoja($('prev-hoja'));renderDob($('prev-dob'));});}
+function setTab(t){['mult','ind'].forEach(k=>{$('tab-'+k).classList.toggle('active',k===t);$('panel-'+k).classList.toggle('hidden',k!==t);});renderAll();}
+let raf=false;function renderAll(){if(raf)return;raf=true;requestAnimationFrame(()=>{raf=false;refreshInd();renderMult($('prev-mult'));});}
 ['rut','dv','nombre','apellido'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='rut')$('rut').value=miles(cd($('rut').value));if(id==='dv')$('dv').value=cdv($('dv').value);refreshInd();}));
-['d-rut','d-dv','d-nombre','d-apellido'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='d-rut')$('d-rut').value=miles(cd($('d-rut').value));if(id==='d-dv')$('d-dv').value=cdv($('d-dv').value);
-  const d=curDob(),info=$('d-rutinfo');if(d.rut&&d.dv){const e=dvEsp(d.rut),dp=miles(d.rut)+'-'+d.dv;info.innerHTML=e===d.dv?`<span class="ok">✓ ${dp}</span>`:`<span class="warn">⚠ ${dp} · DV esperado: ${e}</span>`;}else info.innerHTML='';renderDob($('prev-dob'));}));
-$('dl-ind').addEventListener('click',pdfInd);$('dl-hoja').addEventListener('click',pdfHoja);$('dl-dob').addEventListener('click',pdfDob);
-$('addrow').addEventListener('click',()=>{if(rows.length<8){rows.push({});drawRows();}});
-rows=[{},{}];drawRows();renderAll();
+$('dl-ind').addEventListener('click',pdfInd);$('dl-mult').addEventListener('click',pdfMult);
+$('addrow').addEventListener('click',()=>{if(rows.length<24){rows.push({});drawRows();}});
+rows=[{},{},{}];drawRows();renderAll();
 </script>
 </body>
 </html>

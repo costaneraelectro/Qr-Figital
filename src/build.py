@@ -3,15 +3,10 @@
 Empaqueta la app en un unico archivo `index.html` autocontenido (funciona offline).
 
 Inyecta dentro de `app_template.html`:
-  - vendor/jspdf.umd.min.js      -> generador de PDF
-  - vendor/qrcode.min.js         -> generador de codigo QR
-  - vendor/jsbarcode.min.js      -> codigos de barra (Plan 1 / Plan 2)
-  - assets/logos3.png            -> logos CMR + Debito + Seguros Falabella (tarjeta)
-  - assets/cmr.png               -> logo CMR (header)
-  - assets/umbrella.png          -> logo Seguros Falabella (header)
-
-La tarjeta, el texto, el QR, el nombre y la cara B (seguro + comparador) se
-dibujan con canvas; las imagenes incrustadas son solo los logos.
+  - vendor/jspdf.umd.min.js   -> PDF
+  - vendor/qrcode.min.js      -> codigo QR
+  - vendor/jsbarcode.min.js   -> codigos de barra
+  - assets/*.png (base64)     -> logos y tarjetas
 
 Uso:
     python3 src/build.py
@@ -31,6 +26,10 @@ out = out.replace("<!--__LIB_BARCODE__-->", js("jsbarcode.min.js"))
 out = out.replace("__LOGOS3_B64__",   b64("logos3.png"))
 out = out.replace("__CMR_B64__",      b64("cmr.png"))
 out = out.replace("__UMBRELLA_B64__", b64("umbrella.png"))
+out = out.replace("__SEG_B64__",      b64("seg-logo.png"))
+out = out.replace("__GREEN_B64__",    b64("card-green.png"))
+out = out.replace("__GRAY_B64__",     b64("card-gray.png"))
+out = out.replace("__BLACK_B64__",    b64("card-black.png"))
 
 OUT.write_text(out, encoding="utf-8")
 print(f"OK -> {OUT}  ({len(out):,} bytes)")
