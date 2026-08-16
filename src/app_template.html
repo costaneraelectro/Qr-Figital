@@ -123,7 +123,7 @@
 /* ===== assets ===== */
 const IMG={logos3:"__LOGOS3_B64__",cmr:"__CMR_B64__",umb:"__UMBRELLA_B64__",
   seg:"__SEG_B64__",green:"__GREEN_B64__",gray:"__GRAY_B64__",black:"__BLACK_B64__"};
-const LOGOS3_RATIO=1530/275, VRATIO=60/92, CARD_RATIO=388/260;
+const LOGOS3_RATIO=1530/275, VRATIO=60/92, CARD_RATIO=163/252;
 const BASE_URL="https://www.bancofalabella.cl/pre-landing?utm_source=Falabella&utm_medium=QRregional&utm_content=costanera-center-qr-unificado&utm_campaign=apertura-falabella&utm_term=__TERM__&store_id=3660";
 const SEGURO_QR="https://bit.ly/3HGuZdF";
 const UF_REF="UF 01-08-2026 · $40.845";
@@ -199,9 +199,9 @@ function drawVCard(ctx,x,y,w,entry){
 /* ===== CARA B: seguro + comparador ===== */
 function drawSideB(ctx,x,y,w,hh){
   ctx.fillStyle='#fff';ctx.fillRect(x,y,w,hh);
-  const m=0.055*w, iw=w-2*m; let cy=y+0.012*hh;
-  // logo seguro
-  const lgH=0.075*hh, lgW=lgH*(imgs.seg.width/imgs.seg.height);
+  const m=0.055*w, iw=w-2*m; let cy=y+0.014*hh;
+  // logo seguro (más grande)
+  const lgH=0.11*hh, lgW=lgH*(imgs.seg.width/imgs.seg.height);
   if(imgs.seg.complete)ctx.drawImage(imgs.seg,x+(w-lgW)/2,cy,lgW,lgH);
   cy+=lgH+0.012*hh;
   // barras
@@ -212,14 +212,14 @@ function drawSideB(ctx,x,y,w,hh){
     ctx.drawImage(bc,bx,cy+0.019*hh,bw,bh2);
     txt(ctx,p.mensual+' /mes',bx+bw/2,cy+0.019*hh+bh2+0.015*hh,0.014*hh,true,GREEN,'center');});
   cy+=0.145*hh;
-  // QR aceptar (con zona blanca de silencio para que sea escaneable)
-  const qs=0.145*hh, qpad=qs*0.13, qbx=x+m, qby=cy, qtot=qs+2*qpad;
+  // QR a la DERECHA, texto a la izquierda con flecha → apuntando al QR
+  const qs=0.145*hh, qpad=qs*0.13, qtot=qs+2*qpad;
+  const qbx=x+w-m-qtot, qby=cy, tx=x+m;
+  txt(ctx,'Contrata en caja y',tx,cy+0.042*hh,0.0155*hh,true,'#2b2b2b','left');
+  txt(ctx,'acepta las condiciones',tx,cy+0.042*hh+0.02*hh,0.0155*hh,true,'#2b2b2b','left');
+  txt(ctx,'del seguro aquí  →',tx,cy+0.042*hh+0.043*hh,0.017*hh,true,GREEN,'left');
   rr(ctx,qbx,qby,qtot,qtot,7);ctx.fillStyle='#fff';ctx.fill();ctx.strokeStyle=GREEN;ctx.lineWidth=2;ctx.stroke();
   qrMods(ctx,SEGURO_QR,qbx+qpad,qby+qpad,qs,'M');
-  const tx=qbx+qtot+0.03*w;
-  txt(ctx,'Contrata en caja y',tx,cy+0.04*hh,0.015*hh,true,'#2b2b2b','left');
-  txt(ctx,'acepta las condiciones',tx,cy+0.04*hh+0.018*hh,0.015*hh,true,'#2b2b2b','left');
-  txt(ctx,'del seguro aquí →',tx,cy+0.04*hh+0.036*hh,0.014*hh,false,GRAY,'left');
   cy+=qtot+0.016*hh;
   // tabla
   const rh=0.022*hh,c0=x+m,c1=x+m+iw*0.50,c2=x+m+iw*0.75;
@@ -234,9 +234,9 @@ function drawSideB(ctx,x,y,w,hh){
   txt(ctx,'Compara tu tarjeta CMR',x+w/2,cy+0.016*hh,0.018*hh,true,'#2b2b2b','center'); cy+=0.03*hh;
   const gw=(iw-0.04*w)/3;
   CMRS.forEach((c,i)=>{const gx=x+m+i*(gw+0.02*w);
-    const ci=imgs[c.img], ch2=gw/CARD_RATIO;
-    if(ci.complete)ctx.drawImage(ci,gx,cy,gw,ch2);
-    let ty2=cy+ch2+0.02*hh;
+    const ci=imgs[c.img], cih=0.10*hh, ciw=cih*CARD_RATIO;
+    if(ci.complete)ctx.drawImage(ci,gx+(gw-ciw)/2,cy,ciw,cih);
+    let ty2=cy+cih+0.018*hh;
     txt(ctx,c.tier,gx+gw/2,ty2,0.015*hh,true,'#2b2b2b','center');
     txt(ctx,c.uf+'/año',gx+gw/2,ty2+0.018*hh,0.013*hh,true,GREEN,'center');
     txt(ctx,'aprox. '+c.clp,gx+gw/2,ty2+0.033*hh,0.011*hh,false,'#a0a4a8','center');
