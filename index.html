@@ -540,12 +540,12 @@ const TABLA=[['Cobertura','Plan 1','Plan 2'],['Suma asegurada','$2.042.200','$4.
   ['Precio mín. producto','$24.500','$24.500'],['Muerte accidental','$4.084.500','$4.084.500'],
   ['Precio mensual','$5.700','$8.600']];
 const CMRS=[
-  {img:'green', tier:'Clásica', uf:'UF 0,135', clp:'$5.500', pts:'1 año',
-   bul:['Despacho gratis','Protección robo cajeros','Traslado aeropuerto']},
-  {img:'gray', tier:'Premium', uf:'UF 0,22', clp:'$9.000', pts:'2 años',
-   bul:['Asist. médica USD 25.000','Salón VIP Primeclass','Seg. cancelación viaje']},
-  {img:'black', tier:'Elite', uf:'UF 0,35', clp:'$14.300', pts:'2 años',
-   bul:['Asist. médica USD 150.000','Salón VIP Pacific Club','Seg. demora equipaje']}
+  {img:'green', tier:'Clásica', uf:'UF 0,135', clp:'$5.500', pts:'1 año', lbl:'Clásica',
+   bul:['Oportunidades únicas Falabella','0% comisión compras int.']},
+  {img:'gray', tier:'Premium', uf:'UF 0,22', clp:'$9.000', pts:'2 años', lbl:'Premium +',
+   bul:['Beneficios para viajes','Traslado al aeropuerto']},
+  {img:'black', tier:'Elite', uf:'UF 0,35', clp:'$14.300', pts:'2 años', lbl:'Elite +',
+   bul:['3 despachos gratis al mes','Traslado gratis al aeropuerto','Estacionamiento gratis Mall Plaza','Salón VIP Pacific Club nacional','Seguro cancelación de viaje','Costo $0 Cuenta Corriente']}
 ];
 const GRAY='#54575b', GREEN='#3cab2e', BORDER='#d6d9dc';
 
@@ -570,6 +570,9 @@ function mixed(ctx,cx,top,parts,size){const w=parts.map(([t,b])=>{ctx.font=sans(
   let x=cx-tot/2;ctx.textBaseline='top';ctx.textAlign='left';parts.forEach(([t,b,c],i)=>{ctx.font=sans(size,b);ctx.fillStyle=c;ctx.fillText(t,x,top);x+=w[i];});}
 function txt(ctx,t,x,y,px,b,color,align){ctx.font=sans(px,b);ctx.fillStyle=color||GRAY;ctx.textAlign=align||'left';ctx.textBaseline='alphabetic';ctx.fillText(t,x,y);}
 function short(ctx,t,maxW){let s=t;while(ctx.measureText(s).width>maxW&&s.length>3){s=s.slice(0,-2);}return s.length<t.length?s.trim()+'…':s;}
+function wrapText(ctx,t,maxW,px){ctx.font=sans(px,false);const words=t.split(' ');let lines=[],cur='';
+  for(const wd of words){const test=cur?cur+' '+wd:wd;if(ctx.measureText(test).width<=maxW)cur=test;else{if(cur)lines.push(cur);cur=wd;}}
+  if(cur)lines.push(cur);return lines;}
 function greenTab(ctx,x0,x1,top,bot,dir){const w=x1-x0;rr(ctx,x0,top,w,bot-top,w*0.28);ctx.fillStyle=GREEN;ctx.fill();
   const cx=(x0+x1)/2,cy=(top+bot)/2,ch=w*0.30,cw=w*0.24;ctx.strokeStyle='#fff';ctx.lineWidth=Math.max(4,w*0.15);ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();
   if(dir==='r'){ctx.moveTo(cx-cw/2,cy-ch);ctx.lineTo(cx+cw/2,cy);ctx.lineTo(cx-cw/2,cy+ch);}else{ctx.moveTo(cx+cw/2,cy-ch);ctx.lineTo(cx-cw/2,cy);ctx.lineTo(cx+cw/2,cy+ch);}ctx.stroke();}
@@ -636,21 +639,24 @@ function drawSideB(ctx,x,y,w,hh){
   cy+=TABLA.length*rh+0.004*hh;
   txt(ctx,UF_REF,x+w/2,cy+0.013*hh,0.011*hh,false,'#a0a4a8','center'); cy+=0.026*hh;
   // comparador CMR
-  txt(ctx,'Compara tu tarjeta CMR',x+w/2,cy+0.016*hh,0.018*hh,true,'#2b2b2b','center'); cy+=0.03*hh;
-  const gw=(iw-0.04*w)/3;
+  txt(ctx,'Compara tu tarjeta CMR',x+w/2,cy+0.016*hh,0.018*hh,true,'#2b2b2b','center'); cy+=0.028*hh;
+  const gw=(iw-0.04*w)/3, dot=[GREEN,'#8a8f96','#2b2b2b']; let hdrBot=cy;
   CMRS.forEach((c,i)=>{const gx=x+m+i*(gw+0.02*w);
-    const ci=imgs[c.img], cih=0.10*hh, ciw=cih*CARD_RATIO;
+    const ci=imgs[c.img], cih=0.092*hh, ciw=cih*CARD_RATIO;
     if(ci.complete)ctx.drawImage(ci,gx+(gw-ciw)/2,cy,ciw,cih);
-    let ty2=cy+cih+0.018*hh;
-    txt(ctx,c.tier,gx+gw/2,ty2,0.015*hh,true,'#2b2b2b','center');
-    txt(ctx,c.uf+'/año',gx+gw/2,ty2+0.018*hh,0.013*hh,true,GREEN,'center');
-    txt(ctx,'aprox. '+c.clp,gx+gw/2,ty2+0.033*hh,0.011*hh,false,'#a0a4a8','center');
-    txt(ctx,'Puntos: '+c.pts,gx+gw/2,ty2+0.048*hh,0.012*hh,true,GRAY,'center');
-    let by=ty2+0.066*hh;
-    c.bul.forEach(b=>{ctx.font=sans(0.0115*hh,false);ctx.fillStyle=GRAY;ctx.textAlign='left';ctx.textBaseline='alphabetic';
-      ctx.fillText(short(ctx,'· '+b,gw),gx,by);by+=0.017*hh;});});
-  cy+=0.03*hh; // pie
-  txt(ctx,'Premium y Elite suman los beneficios de la categoría anterior.',x+w/2,y+hh-0.01*hh,0.0105*hh,false,'#a0a4a8','center');
+    let ty2=cy+cih+0.02*hh;
+    txt(ctx,c.tier,gx+gw/2,ty2,0.016*hh,true,'#2b2b2b','center');
+    txt(ctx,c.uf+' · aprox. '+c.clp,gx+gw/2,ty2+0.017*hh,0.0108*hh,true,GREEN,'center');
+    txt(ctx,'Puntos: '+c.pts,gx+gw/2,ty2+0.032*hh,0.012*hh,true,GRAY,'center');
+    hdrBot=Math.max(hdrBot,ty2+0.046*hh);});
+  cy=hdrBot;
+  // beneficios a ancho completo, con viñeta de color por categoría
+  CMRS.forEach((c,i)=>{
+    const line=c.lbl+': '+c.bul.join(' · ');
+    ctx.fillStyle=dot[i];ctx.beginPath();ctx.arc(x+m+0.012*w,cy-0.004*hh,0.008*w,0,7);ctx.fill();
+    const lines=wrapText(ctx,line,iw-0.035*w,0.0118*hh);
+    lines.forEach((ln,j)=>{txt(ctx,ln,x+m+0.032*w,cy,0.0118*hh,j===0,j===0?'#2b2b2b':GRAY,'left');cy+=0.0165*hh;});
+    cy+=0.005*hh;});
   ctx.textAlign='left';
 }
 
