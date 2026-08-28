@@ -638,38 +638,37 @@ function drawSideB(ctx,x,y,w,hh){
     ctx.strokeStyle='#eef1ee';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(c0,ry+rh);ctx.lineTo(c0+iw,ry+rh);ctx.stroke();});
   cy+=TABLA.length*rh+0.004*hh;
   txt(ctx,UF_REF,x+w/2,cy+0.013*hh,0.011*hh,false,'#a0a4a8','center'); cy+=0.026*hh;
-  // comparador CMR: beneficios debajo de cada tarjeta, con viñeta de color
-  txt(ctx,'Compara tu tarjeta CMR',x+w/2,cy+0.016*hh,0.018*hh,true,'#2b2b2b','center'); cy+=0.026*hh;
-  const gw=(iw-0.04*w)/3, dot=[GREEN,'#8a8f96','#2b2b2b'], bfs=0.0104*hh;
+  // comparador CMR: solo tarjetas y valores (más grandes), sin beneficios
+  txt(ctx,'Compara tu tarjeta CMR',x+w/2,cy+0.02*hh,0.021*hh,true,'#2b2b2b','center'); cy+=0.042*hh;
+  const gw=(iw-0.04*w)/3;
   CMRS.forEach((c,i)=>{const gx=x+m+i*(gw+0.02*w);
-    const ci=imgs[c.img], cih=0.085*hh, ciw=cih*CARD_RATIO;
+    const ci=imgs[c.img], cih=0.155*hh, ciw=cih*CARD_RATIO;
     if(ci.complete)ctx.drawImage(ci,gx+(gw-ciw)/2,cy,ciw,cih);
-    let ty2=cy+cih+0.016*hh;
-    txt(ctx,c.tier,gx+gw/2,ty2,0.0155*hh,true,'#2b2b2b','center');
-    txt(ctx,c.uf,gx+gw/2,ty2+0.016*hh,0.0112*hh,true,GREEN,'center');
-    txt(ctx,'aprox. '+c.clp,gx+gw/2,ty2+0.029*hh,0.0098*hh,false,'#a0a4a8','center');
-    txt(ctx,'Puntos: '+c.pts,gx+gw/2,ty2+0.043*hh,0.011*hh,true,GRAY,'center');
-    let by=ty2+0.062*hh;
-    c.bul.forEach(b=>{
-      ctx.fillStyle=dot[i];ctx.beginPath();ctx.arc(gx+0.007*w,by-0.003*hh,0.0055*w,0,7);ctx.fill();
-      wrapText(ctx,b,gw-0.02*w,bfs).forEach(ln=>{txt(ctx,ln,gx+0.018*w,by,bfs,false,GRAY,'left');by+=0.0142*hh;});
-      by+=0.003*hh;});});
+    let ty2=cy+cih+0.03*hh;
+    txt(ctx,c.tier,gx+gw/2,ty2,0.022*hh,true,'#2b2b2b','center');
+    txt(ctx,c.uf+'/año',gx+gw/2,ty2+0.028*hh,0.018*hh,true,GREEN,'center');
+    txt(ctx,'aprox. '+c.clp,gx+gw/2,ty2+0.05*hh,0.014*hh,false,'#7c8085','center');
+    txt(ctx,'Puntos: '+c.pts,gx+gw/2,ty2+0.07*hh,0.0155*hh,true,GRAY,'center');});
   ctx.textAlign='left';
 }
 
 /* ===== DOBLE CARA (franja 62x200) ===== */
 const STRIP={wmm:62,hmm:200};
 function drawStrip(ctx,x,y,w,entry){
-  const h=w/(STRIP.wmm/STRIP.hmm), half=h/2;
+  const h=w/(STRIP.wmm/STRIP.hmm), half=h/2, HB=0.05*h; // banda para perforar en cada extremo
   ctx.fillStyle='#fff';ctx.fillRect(x,y,w,h);
-  // Cara A arriba
-  const cardW=Math.min(w*0.92,half*0.94*VRATIO),cardH=cardW/VRATIO;
-  drawVCard(ctx,x+(w-cardW)/2,y+(half-cardH)/2,cardW,entry);
+  // guías de perforación (se alinean al doblar)
+  function hole(cyH){ctx.save();ctx.setLineDash([3,3]);ctx.strokeStyle='#ccd1d5';ctx.lineWidth=1;ctx.beginPath();ctx.arc(x+w/2,cyH,HB*0.26,0,7);ctx.stroke();ctx.restore();}
+  hole(y+HB*0.5); hole(y+h-HB*0.5);
+  // Cara A: tarjeta centrada dejando la banda superior libre
+  const availA=half-HB;
+  const cardW=Math.min(w*0.90, availA*0.97*VRATIO), cardH=cardW/VRATIO;
+  drawVCard(ctx,x+(w-cardW)/2, y+HB+(availA-cardH)/2, cardW, entry);
   // doblez
   ctx.save();ctx.setLineDash([7,6]);ctx.strokeStyle='#b9bdc1';ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(x,y+half);ctx.lineTo(x+w,y+half);ctx.stroke();ctx.restore();
-  txt(ctx,'▲ doblar aquí ▲',x+w/2,y+half-3,w*0.03,false,'#b9bdc1','center');ctx.textAlign='left';
-  // Cara B abajo (rotada 180)
-  ctx.save();ctx.translate(x+w,y+h);ctx.rotate(Math.PI);drawSideB(ctx,0,0,w,half);ctx.restore();
+  txt(ctx,'▲ doblar ▲',x+w/2,y+half-3,w*0.028,false,'#b9bdc1','center');ctx.textAlign='left';
+  // Cara B: rotada 180, dejando la banda del extremo exterior libre
+  ctx.save();ctx.translate(x+w,y+h);ctx.rotate(Math.PI);drawSideB(ctx,0,HB,w,half-HB);ctx.restore();
   return h;
 }
 
